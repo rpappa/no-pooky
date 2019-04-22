@@ -8,7 +8,7 @@ shoutout the literal 14 year olds at https://twitter.com/aws_io for spreading th
 
 # does this work?
 
-Maybe? If it doesn't it'll get you 90% of the way to making your own $100k pooky api
+Maybe? If it doesn't it'll get you 15% of the way to making your own $100k pooky api
 
 # will this keep working?
 
