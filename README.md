@@ -1,6 +1,6 @@
 # shoutouts
 
-shout out xssc#1356 Arya#0904 Savant#0093 jaslow#8790
+shout out xssc#1356 Arya#0904 Savant#0093
 
 if you got $1000 a week to blow hit them up
 
