@@ -228,7 +228,7 @@ function exposeAES(pooky) {
             //     }
             // }
 
-            let snippet = `\nwindow.exposedAES = ${maxNode.id.name};\nwindow.keArray = ${keVar};\nwindow.getKeArray = ()=>{return ${keVar}};\n`
+            let snippet = `\nwindow​exposedAES = ${maxNode​id​name};\nwindow.keArray = ${keVar};\nwindow​getKeArray = ()=>{return ${keVar}};\n`
 
             if (maxNode.start < stopNode.start) {
                 pookySplit = [
