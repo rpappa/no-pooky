@@ -1,0 +1,49 @@
+<html>
+    <head>
+        <style>
+            body {
+                font-family: sans-serif;
+                padding: 10px 50px 0 50px;
+            }
+
+            pre,tt {
+                font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;
+            }
+            pre {
+                font-size:0.75em;
+                height: auto;
+                overflow: auto;
+                background-color: #eeeeee;
+                word-break: normal !important;
+                word-wrap: normal !important;
+                white-space: pre !important;
+                padding: 10px;
+            }
+            tt {
+                background-color: #f7f7f7;
+            }
+        </style>
+        <title>API demo</title>
+    </head>
+    <body>
+        <h1>Directions</h1>
+        <h3>To get the AES key:</h3>
+        <p>Send an HTTP POST request to <tt>/key</tt></p>
+        <p>The body should be a json object with a "pooky" field that contains the pooky url you want to reverse</p>
+        <pre>{"pooky":"https://assets.supremenewyork.com/assets/pooky.min.53db92f79e9a5333dbb1.js"}</pre>
+
+        <h2>Example code</h2>
+        <p>Run this snippet in the developer tools console. Note that pooky is only reversed once - it'll take about 2 seconds the first time <br /> 
+        and then subsequent calls (with the same pooky url) will take about 40ms</p> 
+        <pre>
+// to get the aes key
+(function() {
+	let startTime = Date.now();
+	fetch('/key', {method: 'POST', headers: {"Content-Type": "application/json"},body:'{"pooky":"https://assets.supremenewyork.com/assets/pooky.min.53db92f79e9a5333dbb1.js"}'}).then((res) => {return res.text()}).then((key)=>{
+        console.log(`Key: ${key}`)
+        console.log(`Took ${Date.now() - startTime}ms`)
+    })
+})();
+        </pre>
+    </body>
+</html>

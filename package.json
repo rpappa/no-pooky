@@ -1,0 +1,21 @@
+{
+  "name": "pooky-reverser",
+  "version": "1.6.4",
+  "description": "reverse pooky on the fly",
+  "main": "api.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "SEE LICENSE IN license.txt",
+  "dependencies": {
+    "acorn-loose": "^6.0.0",
+    "acorn-walk": "^6.1.1",
+    "aes-js": "^3.1.2",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "puppeteer": "^1.14.0",
+    "request": "^2.88.0",
+    "uuid": "^3.3.2"
+  }
+}
