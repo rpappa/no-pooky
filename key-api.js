@@ -32,40 +32,41 @@ let standBy = new DynamicReverser();
 standBy.prepare();
 
 /**
- * If this is called before /drop, the request will wait
- * (and possible time out) until the drop is detected and
- * pooky is reversed
+ * Give the cookies for the given pooky url
  */
 apiApp.post('/cookies', (req, res) => {
     // todo authentication
-    let startTime = Date.now();
-    console.log(req.body);
+
     if (req.body.pooky) {
         let dyn;
         for (let reverser of reversers) {
             if (reverser.url == req.body.pooky) {
+                // if we've already reversed (or are currently reversing) the desired
+                // pooky, use that reverser for performance
                 dyn = reverser.reverser;
-                console.log('used recycled')
             }
         }
         if (typeof dyn === 'undefined') {
             if(standBy) {
+                // grab a reverser that is ready to have pooky injected
                 dyn = standBy;
+                // put another on standby
                 standBy = new DynamicReverser();
                 standBy.prepare();
-                console.log("used standby");
             } else {
+                // rip have to make a new one
                 dyn = new DynamicReverser();
-                console.log("used new");
             }
+            // save a reference the reverser with its pooky url
             reversers.push({
                 url: req.body.pooky,
                 reverser: dyn
             });
-            dyn.stageCompletely(req.body.pooky).then(() => {
-    
-            });
+
+            // stage the new reverser with the pooky url
+            dyn.stageCompletely(req.body.pooky);
         }
+
         dynCookies.manufactureAllCookies(dyn).then(cookies => {
             res.json(cookies);
         }).catch(err => {
@@ -75,11 +76,6 @@ apiApp.post('/cookies', (req, res) => {
     } else {
         res.end('include pooky url {pooky: url}\n' + JSON.stringify(req.body));
     }
-    // dynCookies.manufactureAllCookies().then(cookies => {
-    //     res.json(cookies);
-    //     // uncomment next line for benchmark
-    //     // console.log(`Manufactured cookies in ${Date.now() - startTime}ms`)
-    // })
 });
 
 apiApp.post('/key', (req, res) => {
@@ -87,6 +83,7 @@ apiApp.post('/key', (req, res) => {
     console.log(req.body);
     if (req.body.pooky) {
         let dyn;
+        // see comments on the key api
         for (let reverser of reversers) {
             if (reverser.url == req.body.pooky) {
                 dyn = reverser.reverser;
@@ -97,39 +94,24 @@ apiApp.post('/key', (req, res) => {
                 dyn = standBy;
                 standBy = new DynamicReverser();
                 standBy.prepare();
-                console.log('used standby');
             } else {
                 dyn = new DynamicReverser();
-                console.log('used new')
             }
             reversers.push({
                 url: req.body.pooky,
                 reverser: dyn
             })
         }
-        dyn.stageCompletely(req.body.pooky).then(() => {
-
-        })
+        dyn.stageCompletely(req.body.pooky);
 
         dyn.getKey().then(key => {
-            res.end(aesjs.utils.hex.fromBytes(key));
+            res.end(aesjs.utils.hex.fromBytes(key)); // give the key in hex form
         }).catch(err => {
-            res.end(error);
-        })
-        // res.end('ok');
+            res.end(err);
+        });
     } else {
         res.end('include pooky url {pooky: url}\n' + JSON.stringify(req.body));
     }
 })
 
-apiApp.listen(port, () => { console.log(`API listening on port ${port}`) })
-
-const https = require('https');
-const fs = require('fs');
-
-https.createServer({
-    key: fs.readFileSync('../privkey.pem'),
-    cert: fs.readFileSync('../cert.pem'),
-    ca: fs.readFileSync('../chain.pem')
-}, apiApp)
-    .listen(4000, () => { console.log(`https API listening on port 4000`) });
+apiApp.listen(port, () => { console.log(`API listening on port ${port}`) });

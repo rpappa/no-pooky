@@ -28,6 +28,7 @@ function manufactureAllCookies(dyn) {
             'pooky': "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (match) => {
                 if (match === 'y') return ['a', 'b', '9', '8'][Math.floor(Math.random() * 4)];
                 if (match === 'x') return Math.floor(Math.random() * 16).toString(16);
+                // can replace this function with uuidv4 I think
                 return match;
             }),
             'pooky_use_cookie': true,
@@ -62,34 +63,30 @@ function manufactureAllCookies(dyn) {
         function updatedCoherence() {
             let iv = randomIV();
             let ivString = aesjs.utils.hex.fromBytes(iv);
-            // let toEncrypt = aesjs.utils.utf8.toBytes('pad_PPPPPPP');
-            // console.log(toEncrypt);
-            console.log(iv);
-            let toEncrypt = [ 112, 97, 100, 95, 80, 80, 80, 80, 80, 80, 80 ];
-            console.log(toEncrypt);
+            let toEncrypt = aesjs.utils.utf8.toBytes('pad_PPPPPPP');
             dyn.encrypt(iv, toEncrypt).then(output => {
-                console.log(output);
                 cookies.updated_pooky_coherence = ivString + aesjs.utils.hex.fromBytes(output);
                 checkDone();
             });
         }
 
+
+        // this cookie is probably not needed, instead use the mobile endpoint
+        // in fact the flags in pooky_data will probably result in these cookies
+        // being rejected if you submit from a desktop useragent
         function coherence() {
             let iv = randomIV();
             let ivString = aesjs.utils.hex.fromBytes(iv);
-            // let diffs = [137, 57, 0, 153, 9, 0, 121, 57, 0, 105, 105, 0, 121, 121, 0, 25, 57, 57, 0, 25, 57, 57, 0, 25, 9, 25, 0, 25, 57, 57, 0, 25, 9, 25, 0, 121, 153, 0, 153, 89, 0, 25, 9, 89, 0, 25, 9, 89, 0, 25, 57, 25, 0, 105, 121, 0];
+            
             let toEncrypt = [];
-            // if(Math.random() < 0.5) {
-            //     toEncrypt = diffs;
-            // } else {
-                diffs = [55, 60, 55, 55, 74, 87, 91, 91, 80, 91, 80, 84, 83, 81, 81, 56, 70, 289, 83, 289, 83, 57, 289, 83, 57, 92, 56, 55, 63, 91, 63, 91, 70];
-                for (let diff of diffs) {
-                    for (let char of '' + diff) {
-                        toEncrypt.push(parseInt(char + 9, 16))
-                    }
-                    toEncrypt.push(0);
+            diffs = [55, 60, 55, 55, 74, 87, 91, 91, 80, 91, 80, 84, 83, 81, 81, 56, 70, 289, 83, 289, 83, 57, 289, 83, 57, 92, 56, 55, 63, 91, 63, 91, 70];
+            for (let diff of diffs) {
+                for (let char of '' + diff) {
+                    toEncrypt.push(parseInt(char + 9, 16))
                 }
-            // }
+                toEncrypt.push(0);
+            }
+
             dyn.encrypt(iv, toEncrypt).then(output => {
                 cookies.pooky_pooky_coherence = ivString + aesjs.utils.hex.fromBytes(output);
                 checkDone();
@@ -140,6 +137,7 @@ function manufactureAllCookies(dyn) {
         }
         manufacturers.push(electric);
 
+        // change the 16 to a 3 for desktop checkout I think
         function data() {
             let iv = randomIV();
             let ivString = aesjs.utils.hex.fromBytes(iv);
@@ -150,10 +148,6 @@ function manufactureAllCookies(dyn) {
             });
         }
         manufacturers.push(data);
-
-        // for(let facturer of manufacturers) {
-        //     facturer();
-        // }
 
         for (let cookie in cookies) {
             if (cookie === 'pooky_telemetry' || cookie === 'pooky_settings' ||
@@ -174,6 +168,7 @@ function manufactureAllCookies(dyn) {
 
             }
         }
+
         manufacturers.shift()();
     });
 }
